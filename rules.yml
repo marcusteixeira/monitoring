@@ -1,0 +1,23 @@
+groups:
+ - name: Exporter 
+   rules:
+   - alert: InstanceDown
+     expr: up == 0
+     for: 2m
+
+   - alert: Blackbox Application is Down 
+     expr: probe_success == 0
+     for: 30s
+     labels:
+      severity: "critical"
+     annotations:
+      abstract: "Endpoint {{ $labels.instance }}is down"
+
+   - alert: DiskUsageOver85Percent
+     expr: node_filesystem_avail / node_filesystem_size < (100 - 85) / 100
+     for: 5m
+     labels:
+      severity: "high"
+     annotations:
+      abstract: "{{ $labels.instance }} disk usage has over {$threshold}%."
+
