@@ -1,19 +1,19 @@
 groups:
  - name: Exporter 
    rules:
-   - alert: InstanceDown
+   - alert: InstanceDown 
      expr: up == 0
      for: 2m
 
-   - alert: Blackbox Application is Down 
+   - alert: Blackbox Application is Down #BlackBox
      expr: probe_success == 0
      for: 30s
      labels:
       severity: "critical"
      annotations:
       abstract: "Endpoint {{ $labels.instance }}is down"
-
-   - alert: DiskUsageOver85Percent
+ 
+   - alert: DiskUsageOver85Percent #Linux
      expr: node_filesystem_avail / node_filesystem_size < (100 - 85) / 100
      for: 5m
      labels:
@@ -21,3 +21,10 @@ groups:
      annotations:
       abstract: "{{ $labels.instance }} disk usage has over {$threshold}%."
 
+   - alert: IIS is not Running #Windows
+     expr: wmi_service_state{name="w3svc", state="running"} < 1
+     for: 5m
+     labels:
+      severity: "high"
+     annotations:
+      abstract: "The IIS service on {{ $labels.instance }} is not running."
